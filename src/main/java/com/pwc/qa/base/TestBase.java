@@ -3,6 +3,7 @@ package com.pwc.qa.base;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
@@ -15,18 +16,25 @@ public class TestBase {
 	
 	public static WebDriver driver;
 	public static Properties prop;
-	
+
 	public TestBase() {
 		try {
-		prop = new Properties();
-			FileInputStream ip = new FileInputStream("D:\\Rajneesh\\Software\\PWCAutomationTest\\src\\main\\java\\com\\pwc\\"
-					+ "qa\\config\\config.properties");
-			prop.load(ip);
+			prop = new Properties();
+			// Using ClassLoader to load the config file
+			InputStream inputStream = getClass().getClassLoader().getResourceAsStream("com/pwc/qa/config/config.properties");
+
+			// Check if the file is found, otherwise throw an exception
+			if (inputStream == null) {
+				throw new FileNotFoundException("Property file 'config.properties' not found in the classpath");
+			}
+
+			// Load the properties from the file
+			prop.load(inputStream);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
-	    } catch (IOException e) {
-	        e.printStackTrace();
-	}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 
 }
 public static void initialization() {
